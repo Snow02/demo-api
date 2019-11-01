@@ -22,5 +22,30 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
 
     //Authors
     Route::post('add-authors','AuthorController@addAuthor');
+    Route::get('get-list-authors','AuthorController@getListAuthors');
+    Route::get('get-author/{id}','AuthorController@getAuthor');
+    Route::put('update-author/{id}','AuthorController@updateAuthor');
+    Route::delete('delete-author/{id}','AuthorController@deleteAuthor');
+    Route::get('search-author/{data?}','AuthorController@searchAuthor');
+    Route::get('get-list-articles-by-authorId/{id}','AuthorController@getListArticleByAuthorId');
+
+
+    // Article
+    Route::post('add-articles','ArticleController@add');
+    Route::get('get-all-articles','ArticleController@showAll');
+    Route::get('get-article-by-id/{id}','ArticleController@getArticleById');
+    Route::put('update-article-by-id/{id}','ArticleController@updateArticleById');
+    Route::delete('delete-article-by-id/{id}','ArticleController@deleteArticleById');
+    Route::get('get-author-of-the-article/{id}','ArticleController@getAuthorOfTheArticle');
+
+    // Customer
+    Route::post('add-customers','CustomerController@addCustomers');
+
+    // Order
+    Route::post('add-order-by-customer','OrderController@addOrderByCustomer');
+    Route::get('get-order-by-customer-id/{id}','OrderController@getOrderByCustomerId');
+
+    // Order-detail
+
 
 });
