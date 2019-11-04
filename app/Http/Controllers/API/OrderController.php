@@ -29,7 +29,7 @@ class OrderController extends Controller
             if ($order) {
                 if ($request->has('article_id')) {
                     foreach ($request->article_id as $article_id) {
-                        $order->articles()->attach($article_id, array('price' => $request->get('price')));
+                        $order->articles()->attach([$article_id => array('price' => $request->get('price'))]);
                     }
                 }
                 return $this->success($order, "add Order Successfull");
@@ -48,10 +48,7 @@ class OrderController extends Controller
             $new_list_orders = [];
             if ($list_orders) {
                 foreach ($list_orders as $order) {
-                    $customer = [];
-                    if($order->customers){
-                        $customer = $order->customers->get();
-                    }
+                    $customer = $order->customers;
                     foreach ($order->articles as $article) {
                         $new_articles = [];
 

@@ -37,6 +37,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     Route::put('update-article-by-id/{id}','ArticleController@updateArticleById');
     Route::delete('delete-article-by-id/{id}','ArticleController@deleteArticleById');
     Route::get('get-author-of-the-article/{id}','ArticleController@getAuthorOfTheArticle');
+    Route::post('add-thumb-article/{id}','ArticleController@addThumbArticle');
 
     // Customer
     Route::post('add-customers','CustomerController@addCustomers');
