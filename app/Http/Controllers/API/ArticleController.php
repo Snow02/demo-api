@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Transformers\ArticleTransformer;
-use App\Transformers\AuthorTransformer;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;
@@ -26,12 +26,14 @@ class ArticleController extends Controller
         Manager $fractal,
         ArticleTransformer $articleTransformer
 
-
     ) {
         $this->fractal = $fractal;
         $this->articleTransformer = $articleTransformer;
     }
-
+    public function formatArticleData($articles){
+        $articles = new Collection($articles, $this->articleTransformer); // Create a resource collection transformer
+        return  $this->fractal->createData($articles)->toArray(); // Transform data
+    }
 
     public function add(Request $request)
     {
@@ -72,22 +74,11 @@ class ArticleController extends Controller
     public function showAll()
     {
         try {
-            $articles = Article::with('authors')->get();
-            $media_urls =[];
-            foreach ($articles as $article){
-                foreach($article->media as $media){
-                    $media_urls[] = [
-                        'origin_url' => $media->getFullUrl(),
-                        'thumbnail_url' =>$media->getFullUrl('thumb'),
-                    ];
-                }
-                $article->images = $media_urls;
-                $article->avatar = count($media_urls) ? $media_urls[0] : Null ;
-            }
-
-//            $articles = new Collection($articles, $this->articleTransformer); // Create a resource collection transformer
-//            $articles = $this->fractal->createData($articles)->toArray(); // Transform data
-
+            // Get all
+//            $articles = Article::with('authors')->get();
+            // Get all article with at least one author
+            $articles = Article::Has('authors')->get();
+            $articles = $this->formatArticleData($articles);
             return $this->success($articles, "show all articles");
 
         } catch (\Exception $e) {
@@ -99,7 +90,17 @@ class ArticleController extends Controller
     {
         try {
             $article = Article::find($request->id);
-            $article->media;
+            $article->authors;
+
+            $media_urls = [];
+            foreach($article->media as $media){
+                $media_urls[] = [
+                    'origin_url' => $media->getFullUrl(),
+                    'thumbnail_url' => $media->getFullUrl('thumb'),
+                ];
+                $article->images = $media_urls;
+                $article->avatar = $media_urls[0];
+            }
 
             return $this->success($article, "show article id = $request->id");
         } catch (\Exception $e) {

@@ -4,12 +4,34 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Author;
+use App\Transformers\AuthorTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Collection;
 use Validator;
 
 class AuthorController extends Controller
 {
+    private $fractal;
+    private $authorTransformer;
+    public function __construct( Manager $fractal,AuthorTransformer $authorTransformer)
+    {
+       $this->fractal = $fractal;
+       $this->authorTransformer = $authorTransformer;
+
+    }
+
+    public function formatAuthorData($authors){
+        $authors = new Collection($authors,$this->authorTransformer);
+        return $this->fractal->createData($authors)->toArray();
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addAuthor(Request $request)
     {
         try {
@@ -28,6 +50,12 @@ class AuthorController extends Controller
             $author = Author::create($input);
             if ($author) {
                 $author->articles()->attach($request->get('article_id'));
+                if($request->has('images')){
+                        $author->addAllMediaFromRequest(['images'])->each(function($file_images){
+                            $file_images->toMediaCollection('images-author');
+                        });
+
+                }
                 return $this->success($author, "Create Author Success");
             }
         } catch (\Exception $e) {
@@ -39,6 +67,7 @@ class AuthorController extends Controller
     {
         try {
             $authors = Author::all();
+            $authors = $this->formatAuthorData($authors);
             return $this->success($authors, "show info author");
         } catch (\Exception $e) {
             return $this->error($e);

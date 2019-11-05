@@ -9,7 +9,6 @@ class ArticleTransformer extends TransformerAbstract
     protected $availableIncludes = ['media','authors'];
 
 
-
     public function transform(Article $article)
     {
         $media_urls =[];
@@ -19,7 +18,7 @@ class ArticleTransformer extends TransformerAbstract
                 'thumbnail_url' =>$media->getFullUrl('thumb'),
             ];
         }
-
+        $article->avatar = count($media_urls) ? $media_urls[0] : Null ;
         return [
             'id' => $article->id,
             'title' => $article->title,
@@ -27,6 +26,7 @@ class ArticleTransformer extends TransformerAbstract
             'content' => $article->content,
             'images' => $media_urls,
             'avatar' => $article->avatar,
+            'author' => $article->authors,
 
         ];
     }
