@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Transformers\ArticleTransformer;
-
+use App\Transformers\AuthorTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;
@@ -21,20 +21,26 @@ class ArticleController extends Controller
 
     private $fractal;
     private $articleTransformer;
+    private $authorTransformer;
 
     public function __construct(
         Manager $fractal,
-        ArticleTransformer $articleTransformer
+        ArticleTransformer $articleTransformer,
+        AuthorTransformer $authorTransformer
 
     ) {
         $this->fractal = $fractal;
         $this->articleTransformer = $articleTransformer;
+        $this->authorTransformer = $authorTransformer;
     }
     public function formatArticleData($articles){
         $articles = new Collection($articles, $this->articleTransformer); // Create a resource collection transformer
         return  $this->fractal->createData($articles)->toArray(); // Transform data
     }
-
+    public function formatAuthorData($authors){
+        $authors = new Collection($authors,$this->authorTransformer);
+        return $this->fractal->createData($authors)->toArray();
+    }
     public function add(Request $request)
     {
         try {
@@ -54,9 +60,7 @@ class ArticleController extends Controller
                 if($request->hasFile('images')){
 //                    $article->addMediaFromRequest('images')->toMediaCollection("Image Article");
 
-                    $fileAdders = $article
-                        ->addAllMediaFromRequest(['images'])
-                        ->each(function ($fileAdder) {
+                     $article->addAllMediaFromRequest(['images'])->each(function ($fileAdder) {
                             $fileAdder->toMediaCollection('article-images');
                         });
 
@@ -102,7 +106,7 @@ class ArticleController extends Controller
                 $article->avatar = $media_urls[0];
             }
 
-            return $this->success($article, "show article id = $request->id");
+            return $this->success($article, "show a article");
         } catch (\Exception $e) {
             return $this->error($e);
         }
@@ -138,7 +142,7 @@ class ArticleController extends Controller
                 $article->authors()->detach($author->id);
             }
             $article->delete();
-            return $this->success($article, "Delete Article successful");
+            return $this->success($article, "Delete '$article->title' successful");
         } catch (\Exception $e) {
             return $this->error($e);
         }
@@ -146,10 +150,10 @@ class ArticleController extends Controller
     public function getAuthorOfTheArticle(Request $request)
     {
         try {
-
-            $author = Article::findOrFail($request->id)->authors()->get();
-
-            return $this->success($author, "Author of the article id $request->id");
+            $article = Article::findOrFail($request->id);
+            $author = $article->authors()->get();
+            $author = $this->formatAuthorData($author);
+            return $this->success($author, "Author of the '$article->title'");
         } catch (\Exception $e) {
             return $this->error($e);
         }

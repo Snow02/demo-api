@@ -2,6 +2,7 @@
 namespace App\Transformers;
 
 use App\Models\Article;
+use League\Fractal\Resource\Collection;
 use League\Fractal\TransformerAbstract;
 
 class ArticleTransformer extends TransformerAbstract
@@ -19,6 +20,9 @@ class ArticleTransformer extends TransformerAbstract
             ];
         }
         $article->avatar = count($media_urls) ? $media_urls[0] : Null ;
+
+        $authors = $article->authors;
+
         return [
             'id' => $article->id,
             'title' => $article->title,
@@ -26,9 +30,12 @@ class ArticleTransformer extends TransformerAbstract
             'content' => $article->content,
             'images' => $media_urls,
             'avatar' => $article->avatar,
-            'author' => $article->authors,
+            'author' => $authors,
 
         ];
     }
+
+
+
 }
 ?>

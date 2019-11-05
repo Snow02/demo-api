@@ -14,9 +14,10 @@ class AuthorTransformer extends TransformerAbstract
             'email' => $author->email,
             'phone' => $author->phone,
             'address' => $author->address,
-
         ];
     }
+
+
 
 }
 

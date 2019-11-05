@@ -43,8 +43,16 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     Route::post('add-customers','CustomerController@addCustomers');
 
     // Order
-    Route::post('add-order-by-customer','OrderController@addOrderByCustomer');
+    Route::post('add-order-by-customer','OrderController@addOrder');
     Route::get('get-order-by-customer-id/{id}','OrderController@getOrderByCustomerId');
+    Route::get('get-order-by-status-1','OrderController@getOrderHavePaid');
+    Route::get('get-order-by-date/{date}','OrderController@getOrderByDate');
+    Route::delete('delete-order/{id}','OrderController@DeleteOrder');
+    Route::put('update-order/{id}','OrderController@updateOrderById');
+    Route::put('update-order-by-customer/{customer_id}','OrderController@updateOrderByCustomerId');
+    Route::get('get-order-by-status','OrderController@getOrderByStatus');
+
+
 
     // Order-detail
 
