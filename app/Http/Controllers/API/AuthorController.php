@@ -15,15 +15,16 @@ class AuthorController extends Controller
 {
     private $fractal;
     private $authorTransformer;
-    public function __construct( Manager $fractal,AuthorTransformer $authorTransformer)
-    {
-       $this->fractal = $fractal;
-       $this->authorTransformer = $authorTransformer;
 
+    public function __construct(Manager $fractal, AuthorTransformer $authorTransformer)
+    {
+        $this->fractal = $fractal;
+        $this->authorTransformer = $authorTransformer;
     }
 
-    public function formatAuthorData($authors){
-        $authors = new Collection($authors,$this->authorTransformer);
+    public function formatAuthorData($authors)
+    {
+        $authors = new Collection($authors, $this->authorTransformer);
         return $this->fractal->createData($authors)->toArray();
     }
 
@@ -50,11 +51,10 @@ class AuthorController extends Controller
             $author = Author::create($input);
             if ($author) {
                 $author->articles()->attach($request->get('article_id'));
-                if($request->has('images')){
-                        $author->addAllMediaFromRequest(['images'])->each(function($file_images){
-                            $file_images->toMediaCollection('images-author');
-                        });
-
+                if ($request->has('images')) {
+                    $author->addAllMediaFromRequest(['images'])->each(function ($file_images) {
+                        $file_images->toMediaCollection('images-author');
+                    });
                 }
                 return $this->success($author, "Create Author Success");
             }
@@ -140,7 +140,7 @@ class AuthorController extends Controller
 //            $articles = Author::whereId($request->id)->with('articles')->get();
 //            or
             $articles = Author::find($request->id)->articles()->get();
-            return $this->success($articles,200);
+            return $this->success($articles, 200);
         } catch (\Exception $e) {
             return $this->error($e);
         }

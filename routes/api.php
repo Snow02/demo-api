@@ -14,11 +14,26 @@ use Illuminate\Http\Request;
 */
 
 Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
+    // Users
+    Route::post('register','UserController@register');
+    Route::post('login','UserController@login');
+
+    Route::group(['middleware'=>'auth:api'],function() {
+        Route::get('get-user-login','UserController@getUserLogin');
+        Route::get('logout','UserController@logout');
+        Route::put('change-password','UserController@changePassword');
+        Route::post('update-info-user-login','UserController@UpdateUserLogin');
+        Route::get('delete-user-login','UserController@deleteUserLogin');
+
+
+    });
+
     // Product
     Route::get('get-products','ProductController@getProduct');
     Route::get('get-product-by-id/{id}','ProductController@getProductById');
     Route::get('get-product-by-catId/{cate_id}','ProductController@getProductByCatId');
     Route::post('add-new-product','ProductController@addProduct');
+
 
     //Authors
     Route::post('add-authors','AuthorController@addAuthor');
@@ -50,11 +65,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     Route::delete('delete-order/{id}','OrderController@DeleteOrder');
     Route::put('update-order/{id}','OrderController@updateOrderById');
     Route::put('update-order-by-customer/{customer_id}','OrderController@updateOrderByCustomerId');
-    Route::get('get-order-by-status','OrderController@getOrderByStatus');
+
 
 
 
     // Order-detail
+
+    // Send mail
+    Route::post('send-mail','UserController@sendMail');
 
 
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Validator;
 use Carbon\Carbon;
 
@@ -89,8 +90,9 @@ class OrderController extends Controller
     public function getOrderByDate(Request $request)
     {
         try {
-            $orders = Order::whereDate('created_at', $request->date)->get();
+            $orders = Order::with('articles')->whereDate('created_at', $request->date)->get();
 //            $orders = Order::whereDate('created_at','>=',$request->date)->get();
+
             return $this->success($orders, "Order date {$request->date}");
         } catch (\Exception $e) {
             return $this->error($e);
@@ -143,6 +145,12 @@ class OrderController extends Controller
 
     public function updateOrderByCustomerId(Request $request){
         try{
+            $validator = Validator::make($request->all(),[
+               'article_id' => 'exists:articles,id'
+            ]);
+            if($validator->fails()){
+                return $this->fail($validator->errors(),$validator->messages()->first(), 'Fail', 401);
+            }
             $orders = Order::where('customer_id',$request->customer_id)->get();
             if($orders){
                 foreach($orders as $order){
@@ -174,15 +182,7 @@ class OrderController extends Controller
 
     }
 
-    public function getOrderByStatus(Request $request){
-        try{
-            $status = $request->get('status');
-//            $orders = Order::where('status',$status)->get();
-            return $this->success($status,"List Order Status {$status}");
-        }catch(\Exception $e){
-            return $this->error($e);
-        }
-    }
+
 
 
 
