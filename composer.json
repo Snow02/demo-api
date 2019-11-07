@@ -15,6 +15,7 @@
         "laravel/passport": "^8.0",
         "laravel/tinker": "^1.0",
         "league/fractal": "^0.18.0",
+        "nesbot/carbon": "^2.26",
         "spatie/laravel-medialibrary": "^7.0.0"
     },
     "require-dev": {

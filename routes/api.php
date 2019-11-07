@@ -16,7 +16,18 @@ use Illuminate\Http\Request;
 Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     // Users
     Route::post('register','UserController@register');
+    Route::post('confirm-register','UserController@confirmRegister');
+
     Route::post('login','UserController@login');
+
+    Route::prefix('password')->group(function (){
+        Route::post('send-mail-reset', 'PasswordResetController@sendMailResetPass');
+        Route::get('find/{token}', 'PasswordResetController@find');
+        Route::post('reset', 'PasswordResetController@resetPassword');
+    });
+
+
+
 
     Route::group(['middleware'=>'auth:api'],function() {
         Route::get('get-user-login','UserController@getUserLogin');
@@ -24,7 +35,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
         Route::put('change-password','UserController@changePassword');
         Route::post('update-info-user-login','UserController@UpdateUserLogin');
         Route::get('delete-user-login','UserController@deleteUserLogin');
-
 
     });
 
@@ -65,8 +75,6 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     Route::delete('delete-order/{id}','OrderController@DeleteOrder');
     Route::put('update-order/{id}','OrderController@updateOrderById');
     Route::put('update-order-by-customer/{customer_id}','OrderController@updateOrderByCustomerId');
-
-
 
 
     // Order-detail

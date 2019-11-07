@@ -8,9 +8,13 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Validator;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Exception\FirebaseException;
+use App\Models\ConfirmRegister;
+use App\Notifications\RegisterRequest;
+use App\Notifications\RegisterSuccess;
 
 class UserController extends Controller
 {
@@ -31,6 +35,7 @@ class UserController extends Controller
             }
             $input = $request->all();
             $input['password'] = bcrypt($request->get('password'));
+
             $user = User::create($input);
             if ($user) {
                 if ($request->hasFile('images')) {
@@ -38,11 +43,92 @@ class UserController extends Controller
                         $fileImages->toMediaCollection("image-user");
                     });
                 }
+
+                $confirm_regiter = ConfirmRegister::updateOrCreate(
+                    ['email' => $user->email],
+                    [
+                        'email' => $user->email,
+                        'token'=> Str::random(100)
+                    ]
+                );
+                if($confirm_regiter){
+                    $user->notify(new RegisterRequest($confirm_regiter->token));
+                    return response()->json([
+                        'message' => 'We have e-mailed your register account link!',
+                    ]);
+                }
+
+
             }
             return $this->success($user, " Register Successful");
         } catch (\Exception $e) {
             return $this->error($e);
         }
+    }
+
+    public function confirmRegister(Request $request){
+        try{
+            $validator = Validator::make($request->all(),[
+               'email' => 'required|email',
+               'token' => 'required',
+            ]);
+            if($validator->fails()){
+                return $this->fail($validator->errors(), $validator->messages()->first(), "Fails", 401);
+            }
+
+            //Delete all users over 1 hour not active
+            $list_user = User::all();
+            if($list_user){
+                foreach($list_user as $user){
+                    if(Carbon::parse($user->created_at)->addMinutes(60)->isPast()){
+                            if($user->active == 0){
+                                foreach($user->media as $media){
+                                    $media->delete();
+                                }
+                                $user->delete();
+                            }
+
+                    }
+                }
+            }
+            //
+            $confirm_register = ConfirmRegister::where('email', $request->get('email'))->where('token', $request->get('token'))->first();
+
+            if(!$confirm_register){
+                return response()->json([
+                    'message' => 'This register token is invalid',
+                ]);
+            }
+            //
+            $user =  User::where('email',$confirm_register->email)->first();
+            if(!$user){
+                return response()->json([
+                   'message' => 'Cannot find user with that email address',
+                ]);
+            }
+            //
+            if(Carbon::parse($confirm_register->updated_at)->addMinutes(30)->isPast()){
+                $confirm_register->delete();
+                return response()->json([
+                    'message' => 'This register token is invalid.'
+                ], 404);
+            }
+            //
+            if($confirm_register && $user){
+                $user->active = 1;
+                $user->save();
+                $confirm_register->delete();
+                $user->notify(new RegisterSuccess($confirm_register));
+                return $this->success($user,'Confirm account successful');
+            }
+
+
+        }
+        catch(\ Exception $e){
+            return $this->error($e);
+        }
+
+
     }
 
     public function login(Request $request)

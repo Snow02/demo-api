@@ -41,7 +41,8 @@ class AuthorController extends Controller
                 'email' => 'required|unique:authors,email|email',
                 'article_id' => 'exists:articles,id',
                 'phone' => 'required',
-                'address' => 'required'
+                'address' => 'required',
+
             ]);
             if ($validator->fails()) {
                 // $errorString = implode(",",$validator->messages()->all());

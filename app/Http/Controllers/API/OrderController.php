@@ -8,10 +8,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Validator;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addOrder(Request $request)
     {
         try {
@@ -32,7 +38,6 @@ class OrderController extends Controller
                 if ($request->has('articles')){
                     $articles = json_decode($request->articles);
                     foreach ($articles as $article) {
-
                         $order->articles()->attach($article->id, array('price' => $article->price));
                     }
                 }
@@ -40,6 +45,15 @@ class OrderController extends Controller
                 if($request->has('article_id')){
                     $order->articles()->attach($request->article_id,array('price' => $request->get('price')) );
                 }
+                // Send Mail
+                $customer = $order->customer;
+                $customer_email = $customer->email;
+
+                $content = "Thank you for ordering at the shop, the shop will quickly ship the item to you ";
+                Mail::raw($content, function($message) use ($customer_email){
+                    $message->to($customer_email)->subject("Thank you order !!");
+                });
+
 
                 return $this->success($order, "Add Order Successful");
             }

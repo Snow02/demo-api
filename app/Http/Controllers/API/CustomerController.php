@@ -14,6 +14,7 @@ class CustomerController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             'phone' => 'required',
+            'email' => 'required',
         ]);
         if($validator->fails()){
             return $this->fail($validator->errors(), $validator->messages()->first(), 'false', 401);
