@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RegisterSuccess extends Notification
+class OrderSuccess extends Notification
 {
     use Queueable;
 
@@ -16,9 +16,9 @@ class RegisterSuccess extends Notification
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($name)
     {
-        //
+        $this->name = $name;
     }
 
     /**
@@ -41,8 +41,9 @@ class RegisterSuccess extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('You have successfully authenticated the account.')
-                    ->line('Thank you for using our application!');
+                    ->greeting('Hello ' .$this->name)
+                    ->line('Thank you for ordering at the shop, the shop will quickly ship the item to you.');
+
     }
 
     /**
@@ -54,7 +55,7 @@ class RegisterSuccess extends Notification
     public function toArray($notifiable)
     {
         return [
-
+            //
         ];
     }
 }

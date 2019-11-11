@@ -9,11 +9,11 @@ use Laravel\Passport\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Spatie\MediaLibrary\Models\Media;
-
+use Mpociot\Firebase\SyncsWithFirebase;
 class User extends Authenticatable implements  HasMedia
 {
 
-    use Notifiable, HasMediaTrait , HasApiTokens;
+    use Notifiable, HasMediaTrait , HasApiTokens , SyncsWithFirebase;
 
     /**
      * The attributes that are mass assignable.

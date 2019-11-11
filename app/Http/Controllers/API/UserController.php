@@ -118,7 +118,7 @@ class UserController extends Controller
                 $user->active = 1;
                 $user->save();
                 $confirm_register->delete();
-                $user->notify(new RegisterSuccess($confirm_register));
+                $user->notify(new RegisterSuccess($user));
                 return $this->success($user,'Confirm account successful');
             }
 

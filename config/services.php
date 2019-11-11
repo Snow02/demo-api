@@ -30,4 +30,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'firebase' => [
+        'api_key' => 'API_KEY', // Only used for JS integration
+        'auth_domain' => 'AUTH_DOMAIN', // Only used for JS integration
+        'database_url' => 'https://testing-api-75fa3.firebaseio.com',
+        'secret' => 'DATABASE_SECRET',
+        'storage_bucket' => 'STORAGE_BUCKET', // Only used for JS integration
+    ]
+
 ];

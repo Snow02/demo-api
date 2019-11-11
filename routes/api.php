@@ -81,6 +81,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
 
     // Send mail
     Route::post('send-mail','UserController@sendMail');
+    //
+    Route::get('firebase','FirebaseController@sendNotification');
 
 
 });

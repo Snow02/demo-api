@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 use Validator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
+use App\Notifications\OrderSuccess;
+
 
 class OrderController extends Controller
 {
@@ -46,16 +50,24 @@ class OrderController extends Controller
                     $order->articles()->attach($request->article_id,array('price' => $request->get('price')) );
                 }
                 // Send Mail
-                $customer = $order->customer;
-                $customer_email = $customer->email;
+                $customer = $order->customer()->first();
 
-                $content = "Thank you for ordering at the shop, the shop will quickly ship the item to you ";
-                Mail::raw($content, function($message) use ($customer_email){
-                    $message->to($customer_email)->subject("Thank you order !!");
-                });
+                if($customer){
+                    // C1:
+//                    $customer->notify(new OrderSuccess($customer));
+                    // C2:
+                    Notification::send($customer, new OrderSuccess($customer->name));
+                }
 
 
-                return $this->success($order, "Add Order Successful");
+//                $customer_email = $customer->email;
+//                $content = "Thank you for ordering at the shop, the shop will quickly ship the item to you ";
+//                Mail::raw($content, function($message) use ($customer_email){
+//                    $message->to($customer_email)->subject("Thank you order !!");
+//                });
+
+
+                return $this->success($customer, "Add Order Successful");
             }
         } catch (\Exception $e) {
             return $this->error($e);

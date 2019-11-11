@@ -9,8 +9,12 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
+        "barryvdh/laravel-debugbar": "^3.2",
+        "bensampo/laravel-enum": "^1.26",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
+        "kreait/firebase-php": "^4.35",
+        "kreait/laravel-firebase": "^1.2",
         "laravel/framework": "^6.2",
         "laravel/passport": "^8.0",
         "laravel/tinker": "^1.0",
