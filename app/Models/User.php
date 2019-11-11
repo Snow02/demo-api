@@ -9,11 +9,11 @@ use Laravel\Passport\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Spatie\MediaLibrary\Models\Media;
-use Mpociot\Firebase\SyncsWithFirebase;
+
 class User extends Authenticatable implements  HasMedia
 {
 
-    use Notifiable, HasMediaTrait , HasApiTokens , SyncsWithFirebase;
+    use Notifiable, HasMediaTrait , HasApiTokens ;
 
     /**
      * The attributes that are mass assignable.
@@ -49,5 +49,15 @@ class User extends Authenticatable implements  HasMedia
             ->height(232)
             ->sharpen(10)
             ->nonOptimized();
+    }
+
+    public function deviceTokens()
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
+    // get user active = 0 , use: $user = User->active()->get();
+    public function scopeActive($query){
+        return $this->where('active',0);
     }
 }

@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
+//use function GuzzleHttp\Promise\queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Validator;
 use Illuminate\Http\Request;
-use Kreait\Firebase\Exception\FirebaseException;
+//use Kreait\Firebase\Exception\FirebaseException;
 use App\Models\ConfirmRegister;
 use App\Notifications\RegisterRequest;
 use App\Notifications\RegisterSuccess;
@@ -81,6 +82,7 @@ class UserController extends Controller
             if($list_user){
                 foreach($list_user as $user){
                     if(Carbon::parse($user->created_at)->addMinutes(60)->isPast()){
+
                             if($user->active == 0){
                                 foreach($user->media as $media){
                                     $media->delete();
@@ -92,7 +94,9 @@ class UserController extends Controller
                 }
             }
             //
-            $confirm_register = ConfirmRegister::where('email', $request->get('email'))->where('token', $request->get('token'))->first();
+            // $confirm_register = ConfirmRegister::where('email', $request->get('email'))->where('token', $request->get('token'))->first();
+            // OR
+            $confirm_register = ConfirmRegister::whereEmailAndToken($request->get('email'), $request->get('token'));
 
             if(!$confirm_register){
                 return response()->json([
@@ -288,5 +292,20 @@ class UserController extends Controller
             return $this->error($e);
         }
     }
+
+
+    public function getListUsers(Request $request){
+        try{
+            $list_users = [22,34];
+
+            $users = User::findOrFail([$list_users]);
+            return $this->success($users, "List Users");
+        }
+        catch(\Exception $e){
+            return $this->error($e);
+        }
+    }
+
+
 
 }

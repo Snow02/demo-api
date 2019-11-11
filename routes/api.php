@@ -19,6 +19,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     Route::post('confirm-register','UserController@confirmRegister');
 
     Route::post('login','UserController@login');
+    Route::get('get-list-users','UserController@getListUsers');
+
 
     Route::prefix('password')->group(function (){
         Route::post('send-mail-reset', 'PasswordResetController@sendMailResetPass');
@@ -83,6 +85,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     Route::post('send-mail','UserController@sendMail');
     //
     Route::get('firebase','FirebaseController@sendNotification');
+    Route::get('firebase/get-list-users','FirebaseController@getListUser');
+
 
 
 });

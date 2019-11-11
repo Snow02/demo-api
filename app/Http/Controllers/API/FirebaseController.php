@@ -13,25 +13,31 @@ use Kreait\Firebase\Messaging\Message;
 
 class FirebaseController extends Controller
 {
-    protected $userRepository;
-    protected $database;
-    protected $firebase;
+
+    protected $factory;
 
 
-
+    public function __construct()
+    {
+        $serviceAccount = ServiceAccount::fromJsonFile(public_path('firebase/testing-api-96559-firebase-adminsdk-efyyb-5eedbf0a0d.json'));
+        $factory  = (new Factory())
+            ->withServiceAccount($serviceAccount)
+            ->withDatabaseUri('https://testing-api-96559.firebaseio.com');
+        return $this->factory = $factory;
+    }
 
     public function sendNotification()
     {
         try{
-            $serviceAccount = ServiceAccount::fromJsonFile(public_path('firebase/testing-api-96559-firebase-adminsdk-efyyb-5eedbf0a0d.json'));
-            $factory  = (new Factory())
-                            ->withServiceAccount($serviceAccount)
-                            ->withDatabaseUri('https://testing-api-96559.firebaseio.com');
+//            $serviceAccount = ServiceAccount::fromJsonFile(public_path('firebase/testing-api-96559-firebase-adminsdk-efyyb-5eedbf0a0d.json'));
+//            $factory  = (new Factory())
+//                            ->withServiceAccount($serviceAccount)
+//                            ->withDatabaseUri('https://testing-api-96559.firebaseio.com');
 
 
-            $messaging = $factory->createMessaging();
+            $messaging = $this->factory->createMessaging();
 
-            $deviceToken = 'BA5ScR2hLda6MPfQoZkGuW_6yEiHnTXYnCDYegGlVGBDoJErUZ3tcvppnmaSo5PEsc3XckkAwGIawccQKbKD3s0';
+            $deviceToken = 'dd-RjnBmjl0:APA91bEmRS36X6nullHP5p8ywXExgUD3wokfjzWsLBp1xKo4kZ0fZ5-fV6KPHWYY9rYidZzdc7qsY4FGzIWmKqisOzHRkRftYE0eLu54yHy3kbZPHORTCU8dOyMVm6KXFAeVqB3MrkVK';
             $title = "Hello";
             $body = "Test push notification";
             $data = [
@@ -43,12 +49,25 @@ class FirebaseController extends Controller
                 ->withData($data);
 
             $messaging->send($message);
-            return response()->json('','Push notification success');
+            return response()->json([
+                'message' => ' Push notification success',
+            ]);
         }
         catch (\ Exception $e){
             return $this->error($e);
         }
 
+    }
+
+    public function  getListUser(Request $request){
+        try{
+            $database = $this->factory->createDatabase();
+            $users = $database->getReference('user');
+            $users = $users->getValue();
+            return $this->success($users,"List Users");
+        }catch(\Exception $e){
+            return $this->error($e);
+        }
     }
 
 }
