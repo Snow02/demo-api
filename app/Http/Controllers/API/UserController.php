@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\DeviceToken;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
@@ -142,6 +143,8 @@ class UserController extends Controller
                 'username' => "required",
                 'password' => 'required',
                 'remember_me' => 'boolean',
+                'device_token' => 'required',
+                'mac_address' => 'required',
             ]);
             if ($validator->fails()) {
                 return $this->fail($validator->errors(), $validator->messages()->first(), 'Fail', 401);
@@ -163,6 +166,30 @@ class UserController extends Controller
             $user->access_token = $tokenResult->accessToken;
             $user->expires_at = Carbon::parse($tokenResult->token->expires_at)->toDateTimeString();
             $user->store;
+
+            $device = DeviceToken::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'user_id' => $user->id,
+                    'device_token' => str_replace('%3A',':', $request->get('device_token')),
+                    'mac_address' => $request->get('mac_address'),
+                ]
+            );
+
+            // Or
+//            $device = DeviceToken::where('user_id', $user->id)->first();
+//            if($device){
+//                $device->update([
+//                   'device_token' => str_replace("%3A" , ":" ,$request->get('device_token')),
+//                    'mac_address' => $request->get('mac_address'),
+//                ]);
+//            }
+//            else{
+//                $user->deviceToken()->create([
+//                    'device_token' => str_replace("%3A" , ":" ,$request->get('device_token')),
+//                    'mac_address' => $request->get('mac_address'),
+//                ]);
+//            }
             return $this->success($user, "Login successful");
         } catch (\Exception $e) {
             return $this->error($e);

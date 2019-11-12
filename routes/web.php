@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view("welcome");
 });
+
+Route::get('call-template',function(){
+    return view('admin.list');
+});

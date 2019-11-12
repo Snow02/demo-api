@@ -1,0 +1,47 @@
+.login-page .panel-heading{
+    background: #74b9ff;
+}
+.login-page .panel-title{
+    padding:10px 0px;
+    text-align: center;
+    color:#fff;
+}
+
+.login-page .btn-success{margin-bottom: 30px;background: #74b9ff;border:none}
+
+p.error {
+    color:#f39c12;
+    font-size: 13px;
+    padding:10px 0px;
+    font-style:italic;
+}
+p.success{
+    color:#e74c3c;
+    font-size: 13px;
+    padding:10px 0px;
+    font-style:italic;
+}
+.panel {border:none}
+
+.btn-delete{display: inline-block;border:none;background: none;color:#3498db;}
+.fl-left{float:left}
+
+.lbl-img{
+    padding: 10px 0px 5px 0px;
+    color:#aaa69d;
+}
+form input[type='file']{padding-bottom: 10px;}
+.btn-primary{
+    display: block;
+    margin:20px 0px;
+}
+form #img-current{display:block;width:150px;height: auto;overflow: hidden;}
+
+form #img-detail-current{display:block;width:200px;height: 200px;overflow: hidden;padding-bottom: 20px;}
+form .icon_del{
+    position: relative;
+    top: -210px;
+    left: 175px;
+    background: #55efc4;
+    border:none;
+}

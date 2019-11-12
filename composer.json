@@ -13,6 +13,7 @@
         "bensampo/laravel-enum": "^1.26",
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^6.4",
         "kreait/firebase-php": "^4.35",
         "kreait/laravel-firebase": "^1.2",
         "laravel/framework": "^6.2",

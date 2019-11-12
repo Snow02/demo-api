@@ -77,12 +77,13 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     Route::delete('delete-order/{id}','OrderController@DeleteOrder');
     Route::put('update-order/{id}','OrderController@updateOrderById');
     Route::put('update-order-by-customer/{customer_id}','OrderController@updateOrderByCustomerId');
+    Route::post('send-mail-order','OrderController@sendMail');
 
 
     // Order-detail
 
     // Send mail
-    Route::post('send-mail','UserController@sendMail');
+    Route::post('test-send-mail','UserController@sendMail');
     //
     Route::get('firebase','FirebaseController@sendNotification');
     Route::get('firebase/get-list-users','FirebaseController@getListUser');

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderShipped;
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Notification;
@@ -207,6 +209,20 @@ class OrderController extends Controller
         }
 
     }
+
+    public function sendMail(Request $request){
+        try{
+            $order = Order::findOrFail($request->id);
+            if($order){
+                $customer = $order->customer()->get();
+                Mail::to($customer)->send(new OrderShipped($order));
+                return $this->success($customer, "Send mail success");
+            }
+        }catch(\Exception $e){
+            return $this->error($e);
+        }
+    }
+
 
 
 
