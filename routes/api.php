@@ -17,9 +17,12 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     // Users
     Route::post('register','UserController@register');
     Route::post('confirm-register','UserController@confirmRegister');
-
     Route::post('login','UserController@login');
     Route::get('get-list-users','UserController@getListUsers');
+    Route::put('edit-user/{id}','UserController@editUserById');
+    Route::delete('delete-user/{id}','UserController@deleteUserById');
+    Route::post('upload-images-user/{id}','UserController@uploadImages');
+
 
 
     Route::prefix('password')->group(function (){
@@ -28,15 +31,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
         Route::post('reset', 'PasswordResetController@resetPassword');
     });
 
-
-
-
     Route::group(['middleware'=>'auth:api'],function() {
         Route::get('get-user-login','UserController@getUserLogin');
         Route::get('logout','UserController@logout');
         Route::put('change-password','UserController@changePassword');
         Route::post('update-info-user-login','UserController@UpdateUserLogin');
         Route::get('delete-user-login','UserController@deleteUserLogin');
+
+
 
     });
 
@@ -87,6 +89,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
     //
     Route::get('firebase','FirebaseController@sendNotification');
     Route::get('firebase/get-list-users','FirebaseController@getListUser');
+
+    // FallBack
+    Route::fallback(function(){
+        return response()->json([
+            'message' => 'Not Found ! No links match',
+        ],404);
+    });
+
 
 
 

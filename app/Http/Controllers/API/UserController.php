@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
 //use function GuzzleHttp\Promise\queue;
+use http\Env\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -22,6 +23,7 @@ class UserController extends Controller
 {
     public function register(Request $request)
     {
+
         try {
             $validator = Validator::make($request->all(), [
                 'username' => 'required|unique:users,username',
@@ -41,8 +43,10 @@ class UserController extends Controller
             $user = User::create($input);
             if ($user) {
                 if ($request->hasFile('images')) {
-                    $user->addAllMediaFromRequest('image')->each(function ($fileImages) {
+
+                    $user->addAllMediaFromRequest('images')->each(function ($fileImages) {
                         $fileImages->toMediaCollection("image-user");
+
                     });
                 }
 
@@ -57,10 +61,10 @@ class UserController extends Controller
                     $user->notify(new RegisterRequest($confirm_regiter->token));
                     return response()->json([
                         'message' => 'We have e-mailed your register account link!',
+                        'result' => 200,
+                        'data' => $user,
                     ]);
                 }
-
-
             }
             return $this->success($user, " Register Successful");
         } catch (\Exception $e) {
@@ -80,24 +84,33 @@ class UserController extends Controller
 
             //Delete all users over 1 hour not active
             $list_user = User::all();
+            $list_email_confirm = ConfirmRegister::all();
             if($list_user){
                 foreach($list_user as $user){
                     if(Carbon::parse($user->created_at)->addMinutes(60)->isPast()){
-
                             if($user->active == 0){
+                                // delete images
                                 foreach($user->media as $media){
                                     $media->delete();
                                 }
+                                // delete email need confirm
+                                if($list_email_confirm){
+                                    foreach($list_email_confirm as $email){
+                                        if($user->email == $email){
+                                            $email->delete();
+                                        }
+                                    }
+                                }
+
                                 $user->delete();
                             }
-
                     }
                 }
             }
             //
             // $confirm_register = ConfirmRegister::where('email', $request->get('email'))->where('token', $request->get('token'))->first();
             // OR
-            $confirm_register = ConfirmRegister::whereEmailAndToken($request->get('email'), $request->get('token'));
+            $confirm_register = ConfirmRegister::whereEmailAndToken($request->get('email'), $request->get('token'))->first();
 
             if(!$confirm_register){
                 return response()->json([
@@ -112,7 +125,7 @@ class UserController extends Controller
                 ]);
             }
             //
-            if(Carbon::parse($confirm_register->updated_at)->addMinutes(30)->isPast()){
+            if(Carbon::parse($confirm_register->created_at)->addMinutes(60)->isPast()){
                 $confirm_register->delete();
                 return response()->json([
                     'message' => 'This register token is invalid.'
@@ -329,6 +342,75 @@ class UserController extends Controller
             return $this->success($users, "List Users");
         }
         catch(\Exception $e){
+            return $this->error($e);
+        }
+    }
+
+        public function editUserById(Request $request){
+        try{
+           $validator = Validator::make($request->all(), [
+               'name' => 'required',
+                'email' => 'required|email',
+                'address' => 'required',
+                'phone' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return $this->fail($validator->errors(), $validator->messages()->first(), 'Fail', 401);
+            }
+             User::findOrFail($request->id)->update([
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'phone' => $request->get('phone'),
+                'address' => $request->get('address'),
+            ]);
+            return $this->success(User::findOrFail($request->id), ' Update User Successful');
+
+        }catch(\ Exception $e){
+            return $this->error($e);
+        }
+
+
+
+    }
+
+    public function deleteUserById(Request $request)
+    {
+        try {
+            $user = User::findOrFail($request->id);
+            $user->delete();
+            return $this->success($user, ' Delete User Successful');
+        } catch (\ Exception $e) {
+            return $this->error($e);
+        }
+    }
+
+    public function uploadImages(Request $request)
+    {
+
+        try {
+            $validator = Validator::make($request->all(), [
+
+                'images.*' => 'required|image|mimes:jpg,jpeg,png'
+            ]);
+            if ($validator->fails()) {
+                return $this->fail($validator->errors(), $validator->messages()->first(), 'Fail', 401);
+            }
+            $user = User::findOrFail($request->id);
+            if($user){
+                if($request->hasFile('images')){
+                    $user->addAllMediaFromRequest('images')->each(function($file){
+                        $file->toMediaCollection('image - user');
+                    });
+
+                    return response()->json([
+                        'message' => ' Upload success',
+
+                    ]);
+                }
+            }
+
+
+        } catch (\ Exception $e) {
             return $this->error($e);
         }
     }

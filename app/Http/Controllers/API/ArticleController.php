@@ -81,7 +81,8 @@ class ArticleController extends Controller
             // Get all
 //            $articles = Article::with('authors')->get();
             // Get all article with at least one author
-            $articles = Article::Has('authors')->get();
+            $articles = Article::has('authors')->get();
+
             $articles = $this->formatArticleData($articles);
             return $this->success($articles, "show all articles");
 

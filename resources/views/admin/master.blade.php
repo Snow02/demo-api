@@ -11,25 +11,24 @@
     <title>Admin-@yield('title')</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="public/admin/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="admin/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
-    <link href="public/admin/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+    <link href="admin/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="public/admin/dist/css/sb-admin-2.css" rel="stylesheet">
-    <link rel="stylesheet" href="public/admin/style.css">
+    <link href="admin/dist/css/sb-admin-2.css" rel="stylesheet">
+    <link rel="stylesheet" href="admin/style.css">
     <!-- Custom Fonts -->
-    <link href="public/admin/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="admin/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- DataTables CSS -->
-    <link href="public/admin/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="admin/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
     
     <!-- DataTables Responsive CSS -->
-    <link href="public/admin/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+    <link href="admin/bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
     {{--  Ckeditor -- Ckfinder --}}
-    <script src="public/ckeditor/ckeditor.js"></script>
-    <script src="public/ckfinder/ckfinder.js"></script>
+
     
 </head>
 
@@ -62,7 +61,7 @@
                         {{-- <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> --}}
                         </li>
                         <li class="divider"></li>
-                        <li><a href="{{ route('logout') }}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href=""><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -92,10 +91,10 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Category<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="{{ route('categorys.index') }}">List Category</a>
+                                    <a href="">List Category</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('categorys.create') }}">Add Category</a>
+                                    <a href="">Add Category</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -104,10 +103,10 @@
                             <a href="#"><i class="fa fa-cube fa-fw"></i> Product<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="{{ route('products.index') }}">List Product</a>
+                                    <a href="">List Product</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('products.create') }}">Add Product</a>
+                                    <a href="">Add Product</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -116,10 +115,10 @@
                             <a href="#"><i class="fa fa-users fa-fw"></i> User<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="{{ route('users.index') }}">List User</a>
+                                    <a href="{{route('listUser')}}">List User</a>
                                 </li>
                                 <li>
-                                    <a href="{{ route('users.create') }}">Add User</a>
+                                    <a href="{{route('addUser')}}">Add User</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -138,21 +137,28 @@
     <!-- /#wrapper -->
 
     <!-- jQuery -->
-    <script src="public/admin/bower_components/jquery/dist/jquery.min.js"></script>
-     <script src="public/admin/js/add_img.js"></script>
+    <script src="admin/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="admin/js/confirm_delete.js"></script>
+     <script src="admin/js/add_img.js"></script>
+     <script src="admin/js/edit-user.js"></script>
+     <script src="admin/js/delete-user.js"></script>
+     <script src="admin/js/add-user.js"></script>
+     <script src="admin/js/upload-images.js"></script>
+
+
     <!-- Bootstrap Core JavaScript -->
-    <script src="public/admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
-    <script src="public/admin/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="admin/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="public/admin/dist/js/sb-admin-2.js"></script>
-    <script src="public/admin/js/confirm_delete.js"></script>
+    <script src="admin/dist/js/sb-admin-2.js"></script>
+
 
     <!-- DataTables JavaScript -->
-    <script src="public/admin/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
-    <script src="public/admin/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+    <script src="admin/bower_components/DataTables/media/js/jquery.dataTables.min.js"></script>
+    <script src="admin/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
 
     <!-- Page-Level Demo Scripts - Tables - Use for reference -->
     <script>

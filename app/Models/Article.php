@@ -30,7 +30,7 @@ class Article extends Model implements HasMedia
 
 
     public function authors(){
-        return $this->belongsToMany(Author::class, 'authors_articles')->withDefault(['name' => 'Guest Author']);
+        return $this->belongsToMany(Author::class, 'authors_articles');
     }
 
 }

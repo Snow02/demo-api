@@ -14,7 +14,10 @@
 Route::get('/', function () {
     return view("welcome");
 });
-
-Route::get('call-template',function(){
-    return view('admin.list');
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function () {
+    Route::get('index','UserController@getListUsers')->name('listUser');
+    Route::get('edit/{id}','UserController@getEdit')->name('editUser');
+    Route::get('add-user','UserController@getAdd')->name('addUser');
+    Route::get('upload-images','UserController@upload');
 });
+
