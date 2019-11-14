@@ -6,11 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $table = "category";
+    protected $fillable = ['title','desc','content','parent_id'];
+    protected $hidden = ['created_at','updated_at'];
 
-
-    //Relationship 1 - n vs 'products'
-    public function products(){
-        return $this->HasMany('App\Products','product_id','id');
+    public function posts(){
+        return $this->hasMany(Post::class,'cate_id');
     }
 }

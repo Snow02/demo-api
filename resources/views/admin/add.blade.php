@@ -62,6 +62,13 @@
                         <input type="file" class="form-control" name="images[]" id="images"  multiple/>
 
                     </div>
+                    <div class="form-group">
+                        <label>Authorities</label>
+                        <input type="radio" name="role" id="role" value="0">SuperAdmin
+                        <input type="radio" name="role" id="role" value="1">Admin
+                        <input type="radio" name="role" id="role" checked value="3">Member
+
+                    </div>
                     <button type="submit" class="btn btn-default" id="btn-add">Add</button>
                     <button type="reset" class="btn btn-default">Reset</button>
                 <form>

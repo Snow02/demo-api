@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DeviceToken;
 use App\Models\Order;
 use App\Models\User;
+
 use Carbon\Carbon;
 //use function GuzzleHttp\Promise\queue;
 use http\Env\Response;
@@ -21,6 +22,8 @@ use App\Notifications\RegisterSuccess;
 
 class UserController extends Controller
 {
+
+
     public function register(Request $request)
     {
 
@@ -32,16 +35,24 @@ class UserController extends Controller
                 'password' => 'required',
                 'phone' => 'required',
                 'address' => 'required',
-                'images.*' => 'image|mimes:jpg,jpeg,png'
+                'images.*' => 'image|mimes:jpg,jpeg,png',
+                'role' => 'numeric|max:2:',
             ]);
             if ($validator->fails()) {
                 return $this->fail($validator->errors(), $validator->messages()->first(), "Fail", 401);
             }
             $input = $request->all();
             $input['password'] = bcrypt($request->get('password'));
-
             $user = User::create($input);
+
+            // If isset role
+            if($request->has('role')){
+                $user->role = $request->get('role');
+                $user->save();
+            }
+
             if ($user) {
+                // if add images
                 if ($request->hasFile('images')) {
 
                     $user->addAllMediaFromRequest('images')->each(function ($fileImages) {
@@ -50,15 +61,15 @@ class UserController extends Controller
                     });
                 }
 
-                $confirm_regiter = ConfirmRegister::updateOrCreate(
+                $confirm_register = ConfirmRegister::updateOrCreate(
                     ['email' => $user->email],
                     [
                         'email' => $user->email,
                         'token'=> Str::random(100)
                     ]
                 );
-                if($confirm_regiter){
-                    $user->notify(new RegisterRequest($confirm_regiter->token));
+                if($confirm_register){
+                    $user->notify(new RegisterRequest($confirm_register->token));
                     return response()->json([
                         'message' => 'We have e-mailed your register account link!',
                         'result' => 200,
@@ -87,8 +98,10 @@ class UserController extends Controller
             $list_email_confirm = ConfirmRegister::all();
             if($list_user){
                 foreach($list_user as $user){
+
+                    // Users out of date confirm register
                     if(Carbon::parse($user->created_at)->addMinutes(60)->isPast()){
-                            if($user->active == 0){
+                            if($user->status == User::deactive){
                                 // delete images
                                 foreach($user->media as $media){
                                     $media->delete();
@@ -96,7 +109,7 @@ class UserController extends Controller
                                 // delete email need confirm
                                 if($list_email_confirm){
                                     foreach($list_email_confirm as $email){
-                                        if($user->email == $email){
+                                        if($user->email == $email->email){
                                             $email->delete();
                                         }
                                     }
@@ -105,6 +118,7 @@ class UserController extends Controller
                                 $user->delete();
                             }
                     }
+
                 }
             }
             //
@@ -133,7 +147,7 @@ class UserController extends Controller
             }
             //
             if($confirm_register && $user){
-                $user->active = 1;
+                $user->status = 1;
                 $user->save();
                 $confirm_register->delete();
                 $user->notify(new RegisterSuccess($user));
@@ -163,11 +177,18 @@ class UserController extends Controller
                 return $this->fail($validator->errors(), $validator->messages()->first(), 'Fail', 401);
             }
             $credentials = ['username' => $request->get('username'), 'password' => $request->get('password')];
+
             if (!Auth::attempt($credentials)) {
                 return response()->json([
-                    'message' => 'Unauthorized',
+                    'message' => 'Username or password incorrect',
                 ], 401);
             }
+//            if(Auth::attempt($credentials) && Auth::user()->role == User::Member){
+//                return response()->json([
+//                   'message' => 'You do not have permission to log in to the admin system',
+//                ]);
+//            }
+
             $user = Auth::user();
             $tokenResult = $user->createToken('Personal Access Token');
             $token = $tokenResult->token;
@@ -203,6 +224,7 @@ class UserController extends Controller
 //                    'mac_address' => $request->get('mac_address'),
 //                ]);
 //            }
+
             return $this->success($user, "Login successful");
         } catch (\Exception $e) {
             return $this->error($e);

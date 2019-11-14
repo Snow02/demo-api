@@ -19,5 +19,7 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function () {
     Route::get('edit/{id}','UserController@getEdit')->name('editUser');
     Route::get('add-user','UserController@getAdd')->name('addUser');
     Route::get('upload-images','UserController@upload');
+//    Route::get('login','UserController@login');
+
 });
 

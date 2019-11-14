@@ -2,11 +2,28 @@
 namespace App\Transformers;
 
 use App\Models\Article;
+use App\Models\Author;
+use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use League\Fractal\TransformerAbstract;
 
 class ArticleTransformer extends TransformerAbstract
 {
+    private $fractal;
+    private $authorTransformer;
+    public function __construct(Manager $fractal, AuthorTransformer $authorTransformer)
+    {
+        $this->fractal = $fractal;
+        $this->authorTransformer = $authorTransformer;
+    }
+
+    public function formatAuthorData($authors)
+    {
+        $authors = new Collection($authors, $this->authorTransformer); // Create a resource collection transformer
+        return $this->fractal->createData($authors)->toArray(); // Transform data
+    }
+
+
     protected $availableIncludes = ['media','authors'];
 
 
@@ -21,8 +38,8 @@ class ArticleTransformer extends TransformerAbstract
         }
         $article->avatar = count($media_urls) ? $media_urls[0] : Null ;
 
-        $authors = $article->authors;
-
+        $authors = $this->formatAuthorData($article->authors);
+//        $authors = $article->authors;
         return [
             'id' => $article->id,
             'title' => $article->title,

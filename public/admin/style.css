@@ -45,3 +45,20 @@ form .icon_del{
     background: #55efc4;
     border:none;
 }
+#btn-delete,#btn-edit{
+    color: #23527c;
+    background: none;
+    text-align: center;
+    padding:0;
+}
+/*.btn{padding:0}*/
+tr:hover{
+    background: #41D3BD !important;
+}
+.form-control{padding:4px 12px;margin-top:5px;width:70%}
+input[type='file']{border:none}
+label {display: block;}
+input[type='radio']{
+    display: inline-block;
+}
+

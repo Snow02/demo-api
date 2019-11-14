@@ -50,12 +50,12 @@ class Handler extends ExceptionHandler
     {
         return parent::render($request, $exception);
     }
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return response()->json([
-            'result'  => "false",
-            'message' => "Invalid Token. Please login! ^.^",
-            'data'    => null
-        ], 403);
-    }
+//    protected function unauthenticated($request, AuthenticationException $exception)
+//    {
+//        return response()->json([
+//            'result'  => "false",
+//            'message' => "Invalid Token. Please login! ^.^",
+//            'data'    => null
+//        ], 403);
+//    }
 }

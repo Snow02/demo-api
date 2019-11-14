@@ -14,6 +14,11 @@ class User extends Authenticatable implements  HasMedia
 {
 
     use Notifiable, HasMediaTrait , HasApiTokens ;
+    const active = 1 ;
+    const deactive = 0;
+    const SuperAdmin = 0;
+    const Admin = 1;
+    const Member = 3;
 
     /**
      * The attributes that are mass assignable.
@@ -59,5 +64,9 @@ class User extends Authenticatable implements  HasMedia
     // get user active = 0 , use: $user = User->active()->get();
     public function scopeActive($query){
         return $this->where('active',0);
+    }
+
+    public function  posts(){
+        return $this->hasMany(Post::class);
     }
 }

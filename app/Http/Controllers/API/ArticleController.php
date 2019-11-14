@@ -7,7 +7,6 @@ use App\Models\Article;
 use App\Transformers\ArticleTransformer;
 use App\Transformers\AuthorTransformer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use League\Fractal\Manager;
 use League\Fractal\Resource\Collection;
 use Validator;
@@ -36,10 +35,6 @@ class ArticleController extends Controller
     public function formatArticleData($articles){
         $articles = new Collection($articles, $this->articleTransformer); // Create a resource collection transformer
         return  $this->fractal->createData($articles)->toArray(); // Transform data
-    }
-    public function formatAuthorData($authors){
-        $authors = new Collection($authors,$this->authorTransformer);
-        return $this->fractal->createData($authors)->toArray();
     }
     public function add(Request $request)
     {
@@ -81,7 +76,7 @@ class ArticleController extends Controller
             // Get all
 //            $articles = Article::with('authors')->get();
             // Get all article with at least one author
-            $articles = Article::has('authors')->get();
+            $articles = Article::with('authors')->has('authors')->get();
 
             $articles = $this->formatArticleData($articles);
             return $this->success($articles, "show all articles");

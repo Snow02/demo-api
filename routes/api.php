@@ -38,6 +38,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
         Route::post('update-info-user-login','UserController@UpdateUserLogin');
         Route::get('delete-user-login','UserController@deleteUserLogin');
 
+        // Post
+        Route::post('add-post','PostController@add_posts');
+        Route::delete('delete-post-by-id/{id}','PostController@delete_post');
+        Route::get('get-list-posts','PostController@get_list_posts');
+        Route::get('get-posts-trashed','PostController@get_list_posts_trashed');
+        Route::get('restore-post-trashed/{id}','PostController@restore_posts_trashed');
+
+
 
 
     });
@@ -86,9 +94,14 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
 
     // Send mail
     Route::post('test-send-mail','UserController@sendMail');
-    //
+    // Push notification with firebase
     Route::get('firebase','FirebaseController@sendNotification');
     Route::get('firebase/get-list-users','FirebaseController@getListUser');
+
+    // Category
+    Route::post('add-category','CategoryController@add_category');
+
+
 
     // FallBack
     Route::fallback(function(){
@@ -96,8 +109,5 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
             'message' => 'Not Found ! No links match',
         ],404);
     });
-
-
-
 
 });

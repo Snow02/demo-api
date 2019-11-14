@@ -61,7 +61,7 @@
                         {{-- <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a> --}}
                         </li>
                         <li class="divider"></li>
-                        <li><a href=""><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        <li><a href="" id="btn-logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         </li>
                     </ul>
                     <!-- /.dropdown-user -->
@@ -144,6 +144,7 @@
      <script src="admin/js/delete-user.js"></script>
      <script src="admin/js/add-user.js"></script>
      <script src="admin/js/upload-images.js"></script>
+
 
 
     <!-- Bootstrap Core JavaScript -->
