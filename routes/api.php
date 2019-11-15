@@ -39,13 +39,15 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
         Route::get('delete-user-login','UserController@deleteUserLogin');
 
         // Post
-        Route::post('add-post','PostController@add_posts');
-        Route::delete('delete-post-by-id/{id}','PostController@delete_post');
-        Route::get('get-list-posts','PostController@get_list_posts');
+        Route::post('add-post','PostController@addPost');
+        Route::delete('delete-post-by-id/{id}','PostController@deletePost');
         Route::get('get-posts-trashed','PostController@get_list_posts_trashed');
         Route::get('restore-post-trashed/{id}','PostController@restore_posts_trashed');
-
-
+        Route::get('get-post-by-id/{id}','PostController@getPostById');
+        Route::post('edit-post-by-id/{id}','PostController@editPostById');
+        Route::get('get-posts-by-cate-id/{id}','PostController@getPostsByCateId');
+        Route::get('get-posts-by-user-id/{id}','PostController@getPostsByUserId');
+        Route::get('get-list-posts','PostController@getListPosts');
 
 
     });
@@ -100,6 +102,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
 
     // Category
     Route::post('add-category','CategoryController@add_category');
+    Route::get('get-list-categories','CategoryController@getListCategories');
 
 
 
