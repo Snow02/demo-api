@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Media;
 use App\Models\Post;
-use App\Repositories\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\PostRepositoryInterface;
 
 use Illuminate\Support\Facades\Auth;
 use Validator;
@@ -17,7 +17,7 @@ class PostController extends Controller
     protected  $postRepository;
 
     // contract
-    public function __construct(RepositoryInterface $postRepository)
+    public function __construct(PostRepositoryInterface $postRepository)
     {
         $this->postRepository = $postRepository;
 
@@ -80,9 +80,9 @@ class PostController extends Controller
         }
     }
 
-    public function get_list_posts_trashed(){
+    public function getListPostsTrashed(){
         try{
-            $post = Post::onlyTrashed()->get();
+            $post = $this->postRepository->getListPostsTrashed();
             return $this->success($post,'List post have been deleted');
         }
         catch (\ Exception $e){
@@ -90,16 +90,9 @@ class PostController extends Controller
         }
     }
 
-    public function  restore_posts_trashed(Request $request ){
+    public function  restorePostTrashed(Request $request ){
         try{
-            $post = Post::onlyTrashed()->whereId($request->id)->first();
-            if(!$post){
-                return response()->json([
-                   'message' => 'This post has not been deleted' ,
-                ]);
-            }
-
-            $post->restore();
+            $post = $this->postRepository->restorePostTrashed($request->id);
             return $this->success($post,'Restore post success');
         } catch (\ Exception $e){
             return $this->error($e);
@@ -160,31 +153,18 @@ class PostController extends Controller
     public function  getPostsByCateId(Request $request){
         try{
 
-//            $posts = Post::where('cate_id',$request->id)->with('category')->get();
             $posts = $this->postRepository->selectAll()->where('cate_id',$request->id)->with('category')->get();
-
             if($posts->isEmpty()){
                 return response()->json([
                     'message' => 'The category contains no posts ',
                 ]);
             }
             if($posts->isNotEmpty()){
-                $media_urls = [];
                 foreach($posts as $post){
-                    foreach($post->media as $media){
-                        $media_urls[] = [
-                            'origin_url' => $media->getFullUrl(),
-                            'thumbnail_url' => $media->getFullUrl('thumb'),
-                        ];
-
-                        $post->images = count($media_urls) ? $media_urls : null;
-                        $post->avatar = count($media_urls) ? $media_urls[0] : null;
-
-
-                    }
-
+                    // get images post
+                    $post->images = $this->postRepository->getImages($post);
+                    $post->avatar = $this->postRepository->getAvatar($post);
                 }
-
                 return $this->success($posts,"List post");
             }
         }
@@ -206,20 +186,14 @@ class PostController extends Controller
                 ]);
             }
             if($posts->isNotEmpty()){
-                $media_urls = [];
-                foreach($posts as $post){
-                    foreach($post->media as $media){
-                        $media_urls[] = [
-                            'origin_url' => $media->getFullUrl(),
-                            'thumbnail_url' => $media->getFullUrl('thumb'),
-                        ];
-                        $post->images = count($media_urls) ? $media_urls : null;
-                        $post->avatar = count($media_urls) ? $media_urls[0] : null;
-                    }
 
+                // get images by post
+                foreach($posts as $post){
+                    $post->images = $this->postRepository->getImages($post);
+                    $post->avatar = $this->postRepository->getAvatar($post);
                 }
 
-                return $this->success($posts,"List post by user");
+                return $this->success($posts,"List posts by user");
             }
         }
         catch(\ Exception $e){
@@ -229,16 +203,12 @@ class PostController extends Controller
 
     public function getListPosts(){
         try{
-
-            $post = $this->postRepository->selectAll();
+            $post = $this->postRepository->selectAll()->get();
             return $this->success($post,'List post ');
         }
         catch (\ Exception $e){
             return $this->error($e);
         }
     }
-
-
-
 
 }

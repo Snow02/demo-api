@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
+        <base href="{{asset('')}}">
         <title>Laravel</title>
 
         <!-- Fonts -->
@@ -96,5 +96,11 @@
                 </div>
             </div>
         </div>
+    
+    
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/test-js.js"></script>
     </body>
+
+
 </html>

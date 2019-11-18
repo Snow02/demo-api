@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DeviceToken;
 use App\Models\Order;
 use App\Models\User;
-
+use App\Repositories\Interfaces\UserRepositoryInterface;
 use Carbon\Carbon;
 //use function GuzzleHttp\Promise\queue;
 use http\Env\Response;
@@ -23,6 +23,11 @@ use App\Notifications\RegisterSuccess;
 class UserController extends Controller
 {
 
+    protected $userRepository;
+    public function __construct(UserRepositoryInterface $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
 
     public function register(Request $request)
     {

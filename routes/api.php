@@ -41,8 +41,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
         // Post
         Route::post('add-post','PostController@addPost');
         Route::delete('delete-post-by-id/{id}','PostController@deletePost');
-        Route::get('get-posts-trashed','PostController@get_list_posts_trashed');
-        Route::get('restore-post-trashed/{id}','PostController@restore_posts_trashed');
+        Route::get('get-posts-trashed','PostController@getListPostsTrashed');
+        Route::get('restore-post-trashed/{id}','PostController@restorePostTrashed');
         Route::get('get-post-by-id/{id}','PostController@getPostById');
         Route::post('edit-post-by-id/{id}','PostController@editPostById');
         Route::get('get-posts-by-cate-id/{id}','PostController@getPostsByCateId');

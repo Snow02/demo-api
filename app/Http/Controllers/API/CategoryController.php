@@ -4,14 +4,14 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Repositories\Interfaces\RepositoryInterface;
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use Validator;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
     protected $categoryRepository;
-    public function __construct(RepositoryInterface $categoryRepository)
+    public function __construct(CategoryRepositoryInterface $categoryRepository)
     {
         $this->categoryRepository = $categoryRepository;
     }
@@ -26,8 +26,8 @@ class CategoryController extends Controller
                 return $this->fail($validator->errors(),$validator->messages()->first(),'Fail', 401);
             }
             $input = $request->all();
-            $post = Category::create($input);
-            return $this->success($post , "Add category success ");
+            $cate = $this->categoryRepository->create($input);
+            return $this->success($cate , "Add category success ");
         }
         catch(\ Exception $e){
             return $this->error($e);

@@ -2,14 +2,10 @@
 
 namespace App\Repositories\Eloquent;
 
-class CategoryRepository extends Repository{
-    public function __construct()
-    {
-        $this->app->bind(
-            'App\Repositories\Interfaces\RepositoryInterface',
-            'App\Repositories\Eloquent\CategoryRepository'
-        );
-    }
+use App\Repositories\Interfaces\CategoryRepositoryInterface;
+
+class CategoryRepository extends Repository implements CategoryRepositoryInterface {
+
 
     function model()
     {
